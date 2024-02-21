@@ -1,5 +1,6 @@
 package com.felipepossari.security.user.repository.model;
 
-public enum Role {
-    USER, ADMIN
+public enum UserRole {
+
+    ADMIN, USER;
 }

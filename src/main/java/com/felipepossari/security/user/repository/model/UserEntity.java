@@ -1,5 +1,6 @@
 package com.felipepossari.security.user.repository.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -17,51 +18,52 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@Data
+import static com.felipepossari.security.user.repository.model.UserRole.ADMIN;
+
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @Builder
-@Entity
 public class UserEntity implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    private String firstName;
-    private String lastName;
-    private String email;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
+    @Column(unique = true)
+    private String login;
     private String password;
-    private boolean expired;
-    private boolean locked;
-    private boolean credentialExpired;
-    private boolean enabled;
 
     @Enumerated(value = EnumType.STRING)
-    private List<Role> roles;
+    private UserRole role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream().map(Enum::name).map(SimpleGrantedAuthority::new).toList();
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override
     public String getUsername() {
-        return email;
+        return login;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return !expired;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return !locked;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return !credentialExpired;
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }
