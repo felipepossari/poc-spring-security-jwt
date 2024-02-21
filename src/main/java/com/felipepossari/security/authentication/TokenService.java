@@ -27,7 +27,6 @@ public class TokenService {
                 .subject(user.getLogin())
                 .claim("id", user.getId())
                 .claim("role", user.getRole())
-                .claim("scope", user.getRole())
                 .build();
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }

@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 
+// Allow set authority based in a different field from scope (default)
 @Component
 public class AuthenticationAuthorityConverter implements Converter<Jwt, AbstractAuthenticationToken> {
 

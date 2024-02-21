@@ -1,7 +1,6 @@
 package com.felipepossari.security.config;
 
 import com.felipepossari.security.authentication.AuthenticationAuthorityConverter;
-import com.felipepossari.security.user.repository.model.UserRole;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
@@ -13,6 +12,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("v1/auth/**").permitAll()
-                        .requestMatchers(POST, "/v1/products").hasAuthority(UserRole.ADMIN.name())
+                        .requestMatchers(POST, "/v1/products").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(config -> config
@@ -54,6 +54,12 @@ public class SecurityConfig {
                         )
                 )
                 .build();
+    }
+
+    // Remove prefix ROLE_
+    @Bean
+    public GrantedAuthorityDefaults grantedAuthorityDefaults(){
+        return new GrantedAuthorityDefaults("");
     }
 
     @Bean
@@ -77,6 +83,4 @@ public class SecurityConfig {
         var jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);
     }
-
-
 }
